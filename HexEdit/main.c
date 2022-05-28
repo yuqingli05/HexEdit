@@ -3,9 +3,13 @@
  * @Author: yuqingli
  * @Contact: yuqingli05@outlook.com
  * @Date: 2021-05-29 20:47:03
- * @LastEditTime: 2022-05-28 15:21:43
+ * @LastEditTime: 2022-05-28 16:46:54
  * @LastEditors: yuqingli
  */
+#ifdef _WIN32
+#pragma warning(disable : 4996)
+#endif
+
 #include <stdio.h>
 #include <stdint.h>
 #include <stdlib.h>
@@ -13,10 +17,6 @@
 #include <stdbool.h>
 #include "hex.h"
 #include "getopt.h"
-
-#ifdef _WIN32
-#pragma warning(disable : 4996)
-#endif
 
 int main(int argc, char **argv)
 {
@@ -120,21 +120,21 @@ int main(int argc, char **argv)
 			break;
 		case 'v':
 			printf("version:V0.0.1 %s\n", __DATE__ " "__TIME__);
-			break;
+			return 0;
 		case '?':
 		default:
-			printf("--add 执行文件合并操作,把输入的文件合并成一个文件,当没有输入命令时候add是默认命令\n");
-			printf("--del 对输入文件删除指定地址和长度 地址:长度 eg: --sub 0x00000000:1024 (十六进制:十进制)\n");
-			printf("--cut 对输入文件裁剪出指定地址和长度 eg: --cut 0x00000000:1024 (十六进制:十进制)\n");
-			printf("--set 对输入文件指定地址进行充填操作 地址:长度:充填字节 eg: --set 0x00000000:1024:0xFF (十六进制:十进制:十六进制)\n");
-			printf("-f 后面跟输入的文件名，最多输入64个文件\n");
-			printf("-o 后面跟输出的文件名\n");
-			printf("-b 指定后面输入和输出的文件类型为二进制文件,直到再次遇见改变文件类型的参数(-h)\n");
-			printf("-h 指定后面输入和输出的文件类型为hex文件,直到再次遇见改变文件类型的参数(-h)\n");
-			printf("-x 指定后面输入二进制文件的开始地址,默认为0, -x 0x00;只对后面第一个二进制输入文件生效一次\n");
-			printf("-i 设置输出二进制文件的充填字节,设置-1将分段输出  eg:-i 255(设置充填字节为0xFF) eg:-i \"-1\"(设置分段输出)\n");
-			printf("--version 输出版本信息\n");
-			printf("--help    输出帮助信息\n");
+			printf("\t--add 执行文件合并操作,把输入的文件合并成一个文件,当没有输入命令时候add是默认命令\n");
+			printf("\t--del 对输入文件删除指定地址和长度 地址:长度 eg: --sub 0x00000000:1024 (十六进制:十进制)\n");
+			printf("\t--cut 对输入文件裁剪出指定地址和长度 eg: --cut 0x00000000:1024 (十六进制:十进制)\n");
+			printf("\t--set 对输入文件指定地址进行充填操作 地址:长度:充填字节 eg: --set 0x00000000:1024:0xFF (十六进制:十进制:十六进制)\n");
+			printf("\t-f 后面跟输入的文件名，最多输入64个文件\n");
+			printf("\t-o 后面跟输出的文件名\n");
+			printf("\t-b 指定后面输入和输出的文件类型为二进制文件,直到再次遇见改变文件类型的参数(-h)\n");
+			printf("\t-h 指定后面输入和输出的文件类型为hex文件,直到再次遇见改变文件类型的参数(-h)\n");
+			printf("\t-x 指定后面输入二进制文件的开始地址,默认为0, -x 0x00;只对后面第一个二进制输入文件生效一次\n");
+			printf("\t-i 设置输出二进制文件的充填字节,设置-1将分段输出  eg:-i 255(设置充填字节为0xFF) eg:-i \"-1\"(设置分段输出)\n");
+			printf("\t--version 输出版本信息\n");
+			printf("\t--help    输出帮助信息\n");
 			return 0;
 		}
 	}
@@ -205,7 +205,7 @@ int main(int argc, char **argv)
 
 		hex_delete(&hex);
 	}
-	else //del set cut
+	else // del set cut
 	{
 		uint32_t address = 0;
 		uint32_t len = 0;
@@ -271,7 +271,7 @@ int main(int argc, char **argv)
 				}
 
 				bool _rb;
-				uint8_t* _temp_buf = NULL;
+				uint8_t *_temp_buf = NULL;
 
 				if (cmd == 201)
 				{
@@ -279,7 +279,7 @@ int main(int argc, char **argv)
 				}
 				else if (cmd == 202)
 				{
-					_temp_buf = (uint8_t*)malloc(len);
+					_temp_buf = (uint8_t *)malloc(len);
 					memset(_temp_buf, value, len);
 					_rb = hex_addEx(&hex, address, len, _temp_buf, true);
 				}
@@ -289,7 +289,6 @@ int main(int argc, char **argv)
 					if (_rb)
 						_rb = hex_remove(&hex, address + len, UINT32_MAX - (address + len));
 				}
-
 
 				if (_rb)
 				{
