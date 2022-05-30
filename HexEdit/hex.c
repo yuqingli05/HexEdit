@@ -3,7 +3,7 @@
  * @Author: yuqingli
  * @Contact: yuqingli05@outlook.com
  * @Date: 2021-05-29 20:47:03
- * @LastEditTime: 2022-05-28 15:21:18
+ * @LastEditTime: 2022-05-30 15:00:20
  * @LastEditors: yuqingli
  */
 #include <stdio.h>
@@ -385,7 +385,7 @@ bool hex_merge(PtrList *hexA_list, PtrList *hexB_list)
 {
 	return hex_mergeEx(hexA_list, hexB_list, false);
 }
-//获取flash 总大小
+//获取flash 总大小，不包括未设置区域
 uint32_t hex_getLen(PtrList *hex_list)
 {
 	uint32_t len = 0;
@@ -395,6 +395,34 @@ uint32_t hex_getLen(PtrList *hex_list)
 		len += block->len;
 	}
 	return len;
+}
+//获取开始地址
+uint32_t hex_getStartAddress(PtrList *hex_list)
+{
+	POSITION node = hex_list->head;
+	if (node)
+	{
+		struct HEX_BLOCK_NODE* block = PtrNode_get(node);
+		return block->startAddress;
+	}
+	else
+	{
+		return 0;
+	}
+}
+//获取结束地址
+uint32_t hex_getEndAddress(PtrList *hex_list)
+{
+	POSITION node = hex_list->rear;
+	if (node)
+	{
+		struct HEX_BLOCK_NODE* block = PtrNode_get(node);
+		return block->startAddress + block->len;
+	}
+	else
+	{
+		return 0;
+	}
 }
 // 读入一个hex文件到链表
 // isCover 是true的时候会覆盖重合区域
@@ -566,7 +594,7 @@ int hex_writeFile(PtrList *hex_list, char *FilePath, bool isCover)
 	return 0;
 }
 // 读入一个二进制文件文件到链表
-// startAddress 二进制文件不带有地址，需要手动设置地址
+// startAddress 二进制文件不带有地址，需要手动设置地址。如果等于 UINT32_MAX 直接 拼接到后面
 // isCover 是true的时候会覆盖重合区域
 // return 0:成功 -1:文件打开失败 -2:hex_list 和文件有重合区域
 int bin_readFile(PtrList *hex_list, char *FilePath, uint32_t startAddress, bool isCover)
@@ -592,6 +620,10 @@ int bin_readFile(PtrList *hex_list, char *FilePath, uint32_t startAddress, bool 
 
 	fclose(fp);
 
+	if (startAddress == UINT32_MAX)
+	{
+		startAddress = hex_getEndAddress(hex_list);
+	}
 	int r = hex_addEx(hex_list, startAddress, size, byte_buf, isCover);
 	free(byte_buf);
 	return r ? 0 : -2;

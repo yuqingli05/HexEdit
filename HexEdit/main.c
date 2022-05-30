@@ -43,7 +43,7 @@ int main(int argc, char **argv)
 	int binaryOutMode = 0xFF; //二进制文件输出模式 <0:分段输出 >充填输出字节
 	char outFilePath[1024] = "";
 
-	uint32_t binaryAddress = 0; //后面的二进制文件地址
+	uint32_t binaryAddress = UINT32_MAX; //后面的二进制文件地址
 	int currentFileType = -1;	//当前文件类型 1:bin 或者 0:hex
 
 	while ((c = getopt_long(argc, argv, "f:o:bhx:i:v", long_options, &option_index)) != -1)
@@ -82,7 +82,7 @@ int main(int argc, char **argv)
 			}
 			inbinaryAddress[inFileNum] = binaryAddress;
 			inFileNum++;
-			binaryAddress = 0; //恢复默认地址
+			binaryAddress = UINT32_MAX; //恢复默认地址
 			break;
 		case 'o':
 			strcpy(outFilePath, optarg);
@@ -131,7 +131,7 @@ int main(int argc, char **argv)
 			printf("\t-o 后面跟输出的文件名\n");
 			printf("\t-b 指定后面输入和输出的文件类型为二进制文件,直到再次遇见改变文件类型的参数\n");
 			printf("\t-h 指定后面输入和输出的文件类型为hex文件,直到再次遇见改变文件类型的参数\n");
-			printf("\t-x 指定后面输入二进制文件的开始地址,默认为0, -x 0x00;只对后面第一个二进制输入文件生效一次\n");
+			printf("\t-x 指定后面输入二进制文件的开始地址,如果不指定的话直接在后面拼接, eg:-x 0x00\n");
 			printf("\t-i 设置输出二进制文件的充填字节,设置-1将分段输出  eg:-i 255(设置充填字节为0xFF,默认0xFF)\n");
 			printf("\t--version 输出版本信息\n");
 			printf("\t--help    输出帮助信息\n");
