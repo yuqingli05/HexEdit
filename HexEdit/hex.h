@@ -35,6 +35,10 @@ extern bool hex_mergeEx(PtrList *hexA_list, PtrList *hexB_list, bool isCover);
 extern bool hex_merge(PtrList *hexA_list, PtrList *hexB_list);
 //获取flash 总大小
 extern uint32_t hex_getLen(PtrList *hex_list);
+//获取开始地址
+extern uint32_t hex_getStartAddress(PtrList* hex_list);
+//获取结束地址
+extern uint32_t hex_getEndAddress(PtrList* hex_list);
 // 读入一个hex文件到链表
 // isCover 是true的时候会覆盖重合区域
 // return 0:成功 正值:解析数据错误的行 -1:文件打开失败 -2:hex_list 和文件有重合区域
