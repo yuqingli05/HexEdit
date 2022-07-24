@@ -109,7 +109,7 @@ static bool block_isOverlap(uint32_t startAddress1, uint32_t len1, uint32_t star
 {
 	return (startAddress1 < startAddress2 + len2 && startAddress1 + len1 > startAddress2);
 }
-//判断两个hex 链表内部 块是否又重和区域
+//判断两个hex 链表内部 块是否有重和区域
 bool hex_isOverlap(PtrList *hexA_list, PtrList *hexB_list)
 {
 	POSITION nodeA = hexA_list->head;
@@ -276,7 +276,7 @@ bool hex_addEx(PtrList *hex_list, uint32_t startAddress, uint32_t len, uint8_t *
 			memcpy(&block->buf[block->len], buf, len);
 			block->len += len;
 
-			//检测和下一个块是否收尾相接
+			//检测和下一个块是否头相接
 			if (node_next && next_block)
 			{
 				//收尾相接开始合并
@@ -677,14 +677,17 @@ int bin_writeFile(PtrList *hex_list, char *FilePath, int freeValue, bool isCover
 			addressEnd_pre = hex_address;
 		}
 
-		//分段存储,重新打开文件
-		if (freeValue < 0) //分段存储
+		if (freeValue < 0)
 		{
+			//分段存储,重新打开文件
 			char _fname[300];
 			sprintf(_fname, "%s%08X", fname, hex_address);
 			_makepath(path_buffer, drive, dir, _fname, ext);
 			if (fp)
+			{
 				fclose(fp);
+				fp = NULL;
+			}
 			if ((fp = fopen(path_buffer, "wb")) == NULL)
 			{
 				return -1;
@@ -710,7 +713,7 @@ int bin_writeFile(PtrList *hex_list, char *FilePath, int freeValue, bool isCover
 		addressEnd_pre = hex_address + hexBufLen;
 	}
 
-	if (freeValue >= 0 && fp) //不分段存储
+	if (fp)
 	{
 		fclose(fp);
 		fp = NULL;
