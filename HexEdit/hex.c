@@ -110,16 +110,15 @@ static bool block_isOverlap(uint32_t startAddress1, uint32_t len1, uint32_t star
 	return (startAddress1 < startAddress2 + len2 && startAddress1 + len1 > startAddress2);
 }
 //判断两个hex 链表内部 块是否有重和区域
-bool hex_isOverlap(PtrList *hexA_list, PtrList *hexB_list)
+static bool hex_isOverlap(PtrList* hexA_list, PtrList* hexB_list)
 {
 	POSITION nodeA = hexA_list->head;
 	POSITION nodeB = hexB_list->head;
 	while (nodeA != NULL && nodeB != NULL)
 	{
-		struct HEX_BLOCK_NODE *blockA = PtrNode_get(nodeA);
-		struct HEX_BLOCK_NODE *blockB = PtrNode_get(nodeB);
-		if (blockB->startAddress < blockA->startAddress + blockA->len &&
-			blockB->startAddress + blockB->len > blockA->startAddress)
+		struct HEX_BLOCK_NODE* blockA = PtrNode_get(nodeA);
+		struct HEX_BLOCK_NODE* blockB = PtrNode_get(nodeB);
+		if (block_isOverlap(blockA->startAddress, blockA->len, blockB->startAddress, blockB->len))
 		{
 			return true;
 		}
@@ -147,7 +146,6 @@ bool hex_delete(PtrList *hex_list)
 	PtrList_delete_all(hex_list);
 	return true;
 }
-
 //删除一个块
 bool hex_remove(PtrList *hex_list, uint32_t startAddress, uint32_t len)
 {
@@ -262,7 +260,7 @@ bool hex_addEx(PtrList *hex_list, uint32_t startAddress, uint32_t len, uint8_t *
 		else if ((block && block_isOverlap(startAddress, len, block->startAddress, block->len)) || //和本块相交
 				 (next_block && block_isOverlap(startAddress, len, next_block->startAddress, next_block->len)))
 		{
-			////地址重合 不能继续添加
+			//地址重合 不能继续添加
 			return false;
 		}
 		else if (block->startAddress + block->len == startAddress) //和本块尾相接
@@ -362,6 +360,7 @@ bool hex_add(PtrList *hex_list, uint32_t startAddress, uint32_t len, uint8_t *bu
 {
 	return hex_addEx(hex_list, startAddress, len, buf, false);
 }
+
 //将hexB_list 里面的节点 保存的数据全部复制到 hexA_list里面一份
 //如果 没检查到重合区域，并且hex_add 失败，hexA_list里面的内容可能会被改写。但是正常正确的hexA_list和hexB_list
 //不应该会出现这个情况
