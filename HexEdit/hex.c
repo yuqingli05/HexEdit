@@ -13,17 +13,11 @@
 #include <stdbool.h>
 #include <ctype.h>
 #include "utils_ptrlist.h"
+#include "hex.h"
 
 #ifdef _WIN32
 #pragma warning(disable : 4996)
 #endif
-
-struct HEX_BLOCK_NODE
-{
-	uint32_t startAddress; //开始地址
-	uint32_t len;		   //固件长度
-	uint8_t *buf;		   //固件buf
-};
 
 static int _nibble_value(char nibble)
 {
@@ -110,7 +104,7 @@ static bool block_isOverlap(uint32_t startAddress1, uint32_t len1, uint32_t star
 	return (startAddress1 < startAddress2 + len2 && startAddress1 + len1 > startAddress2);
 }
 //判断两个hex 链表内部 块是否有重和区域
-static bool hex_isOverlap(PtrList* hexA_list, PtrList* hexB_list)
+bool hex_isOverlap(PtrList* hexA_list, PtrList* hexB_list)
 {
 	POSITION nodeA = hexA_list->head;
 	POSITION nodeB = hexB_list->head;
