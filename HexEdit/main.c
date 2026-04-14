@@ -3,7 +3,7 @@
  * @Author: yuqingli
  * @Contact: yuqingli05@outlook.com
  * @Date: 2021-05-29 20:47:03
- * @LastEditTime: 2026-04-14 17:58:18
+ * @LastEditTime: 2026-04-14 18:05:48
  * @LastEditors: yuqingli
  * @Update: 全参数自动识别 8/10/16 进制输入
  */
@@ -138,9 +138,9 @@ int main(int argc, char **argv)
         case '?':
         default:
             printf("\t--add 执行文件合并操作,把输入的文件合并成一个文件,当没有输入命令时候add是默认命令\n");
-            printf("\t--del 对输入文件删除指定地址和长度 地址:长度 eg: --del 0x00000000:1024 (十六进制:十进制)\n");
-            printf("\t--cut 对输入文件裁剪出指定地址和长度 eg: --cut 0x00000000:1024 (十六进制:十进制)\n");
-            printf("\t--set 对输入文件指定地址进行充填操作 地址:长度:充填字节 eg: --set 0x00000000:1024:0xFF(十六进制:十进制:十六进制)\n");
+			printf("\t--del 对输入文件删除指定地址和长度 地址:长度 eg: --del 0x00000000:1024 (十六进制 或 十进制) 长度为0删除到结尾\n");
+			printf("\t--cut 对输入文件裁剪出指定地址和长度 eg: --cut 0x00000000:1024 (十六进制 或 十进制) 长度为0删除截取到结尾\n");
+			printf("\t--set 对输入文件指定地址进行充填操作 地址:长度:充填字节 eg: --set 0x00000000:1024:0xFF(十六进制 或 十进制)\n");
             printf("\t-f 后面跟输入的文件名，最多输入64个文件\n");
             printf("\t-o 后面跟输出的文件名\n");
             printf("\t-b 指定后面输入和输出的文件类型为二进制文件,直到再次遇见改变文件类型的参数\n");
@@ -289,6 +289,9 @@ int main(int argc, char **argv)
 
                 if (cmd == 201)
                 {
+					if (len == 0) // 0 删除到结尾
+						_rb = hex_remove(&hex, address, UINT32_MAX - (address + len));
+					else
                     _rb = hex_remove(&hex, address, len);
                 }
                 else if (cmd == 202)
@@ -300,7 +303,7 @@ int main(int argc, char **argv)
                 else if (cmd == 203)
                 {
                     _rb = hex_remove(&hex, 0, address);
-                    if (_rb)
+					if (_rb && len != 0) // 0 截取到结尾
                         _rb = hex_remove(&hex, address + len, UINT32_MAX - (address + len));
                 }
 
