@@ -3,7 +3,7 @@
  * @Author: yuqingli
  * @Contact: yuqingli05@outlook.com
  * @Date: 2021-05-29 20:47:03
- * @LastEditTime: 2026-04-14 17:49:12
+ * @LastEditTime: 2026-04-14 17:58:18
  * @LastEditors: yuqingli
  * @Update: 全参数自动识别 8/10/16 进制输入
  */
@@ -126,15 +126,12 @@ int main(int argc, char **argv)
             currentFileType = 0;
             break;
 
-        // ====================== 自动识别修改 ======================
         case 'x':
             binaryAddress = auto_str_to_uint32(optarg);
             break;
         case 'i':
             binaryOutMode = (int)auto_str_to_uint32(optarg);
             break;
-            // ==========================================================
-
         case 'v':
             printf("version:V1.0.0 %s\n", __DATE__ " " __TIME__);
             return 0;
